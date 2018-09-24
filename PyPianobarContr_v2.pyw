@@ -54,6 +54,12 @@ def spclCommand():
     cmdStr = spclStr.get()
     sendCMD(cmdStr)
 
+def startPandora():
+    # Use "nohup" to prevent closing when this script closes
+    # Use "&" to set Pandora operation in background
+    command = "nohup pianobar & > pianobar.out"
+    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command( command )
+
 # GUI Initialization ##############################################
 gui = Tk()
 gui.title("  Pianobar Pandora Client Control")
@@ -109,10 +115,14 @@ thmdnbtn = Button(updnframe, image=thdnimg, width=75, bg="white",
                   activebackground="white", command=ulike).pack(side=RIGHT)
 tierdbtn = Button(updnframe, text="Tired", padx=20, pady=10, bg="white",
                   activebackground="white", command=tired).pack()
-quitbtn = Button(contframe, text="Close Pianobar Pandora Client", bg="white", padx=20,
-                 activebackground="white", command = quitPandora).pack(side=BOTTOM)
 spclbtn = Button(contframe, text="Send Command to Pianobar:", padx=6, bg="white",
                  activebackground="white", command = spclCommand).pack(side=LEFT)
+# Menu
+menubar = Menu( gui )
+conmenu = Menu(menubar, tearoff = 0)
+conmenu.add_command(label = "Start Pianobar", command = startPandora)
+conmenu.add_command(label = "Quit Pianobar", command = quitPandora)
+menubar.add_cascade(label = "Pandora", menu = conmenu)
 # Terminal/Printout Display
 text = Text(termframe, bg="black",fg="green2",width=100)
 text.pack()
@@ -124,6 +134,7 @@ spclEntry = Entry(contframe, textvariable=spclStr, bg="white", bd=5).pack(side=L
 try:
     # Print status information for user
     text.insert(END, "Attempting SSH Connection to Pianobar Server...\n")
+    gui.config( menu = menubar )
     gui.update()
     # Try starting control SSH
     ssh = p.SSHClient()

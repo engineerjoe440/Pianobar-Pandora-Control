@@ -1,10 +1,11 @@
 from tkinter import *
-from tkinter import messagebox
-import paramiko as p
-import time
+from tkinter import messagebox # Used for tkinter popups
+from tkinter import filedialog # Used for file dialog operations
+import paramiko as p # Used for SSH
+import time # Used for delays
 import os
 import ctypes
-WorkDir = os.getcwd()
+WorkDir = os.getcwd() # Gather current working directory
 
 # SSH Parameters ##################################################
 server   = "192.168.1.10"
@@ -21,8 +22,22 @@ qut      = "q"
 tsong    = "t"
 ###################################################################
 
+# GUI Initialization ##############################################
+gui = Tk()
+gui.title("  Pianobar Pandora Client Control")
+spclStr = StringVar()
+myappid = 'Stanley Solutions.Python Pandora Control.GUI.2'
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+###################################################################
+
 # Functions #######################################################
+def on_closing():
+    sftp.close() # Close SSH FTP connection on quit
+    ssh.close() # Close SSH Connection on quit
+    gui.destroy() # Destroy gui window and quit program
+    
 def sendCMD(cmd):
+    # Create string necessary to send information to fifo
     command = "echo '"+cmd+"' >> /home/pi/.config/pianobar/ctl"
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command( command )
 
@@ -56,16 +71,25 @@ def spclCommand():
 
 def startPandora():
     # Use "nohup" to prevent closing when this script closes
-    # Use "&" to set Pandora operation in background
-    command = "nohup pianobar & > pianobar.out"
+    command = "nohup pianobar > pianobar.out 2>&1"
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command( command )
 
-# GUI Initialization ##############################################
-gui = Tk()
-gui.title("  Pianobar Pandora Client Control")
-spclStr = StringVar()
-myappid = 'Stanley Solutions.Python Pandora Control.GUI.2'
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+def saveLogasName():
+    gui.filename = filedialog.asksaveasfilename(initialdir = WorkDir,
+            title = "Save Pandora Log File as",
+            filetypes = (("text file","*.txt"),("all files","*.*")))
+    print(gui.filename)
+
+def mainTask():
+##    print("hi there")
+##    print(sftp.getcwd())
+##    sftp.chdir("/home/pi")
+##    print(sftp.getcwd())
+##    print(sftp.listdir())
+##    print(sftp.lstat("pianobar.out"))
+##    sftp.get( WorkDir+"\Plog.txt", "pianobar.out" )
+    
+    gui.after(5000, mainTask) # Reschedule main task
 ###################################################################
 
 # Gather Images ###################################################
@@ -119,6 +143,9 @@ spclbtn = Button(contframe, text="Send Command to Pianobar:", padx=6, bg="white"
                  activebackground="white", command = spclCommand).pack(side=LEFT)
 # Menu
 menubar = Menu( gui )
+filemenu = Menu(menubar,tearoff = 0)
+filemenu.add_command(label = "Save Pandora Log As", command = saveLogasName)
+menubar.add_cascade(label = "File", menu = filemenu)
 conmenu = Menu(menubar, tearoff = 0)
 conmenu.add_command(label = "Start Pianobar", command = startPandora)
 conmenu.add_command(label = "Quit Pianobar", command = quitPandora)
@@ -134,6 +161,7 @@ spclEntry = Entry(contframe, textvariable=spclStr, bg="white", bd=5).pack(side=L
 try:
     # Print status information for user
     text.insert(END, "Attempting SSH Connection to Pianobar Server...\n")
+    gui.protocol("WM_DELETE_WINDOW", on_closing)
     gui.config( menu = menubar )
     gui.update()
     # Try starting control SSH
@@ -141,6 +169,8 @@ try:
     ssh.load_system_host_keys()
     ssh.set_missing_host_key_policy(p.AutoAddPolicy())
     ssh.connect(server, username=username, password=password)
+    # Try starting SSH File Transfer System
+    sftp = ssh.open_sftp()
     # Print status information for user
     text.insert(END, "SSH Connection Established Successfully!\n")
 except TimeoutError:
@@ -154,4 +184,6 @@ except TimeoutError:
     sys.exit()
 ###################################################################
 
+# Iteratively perform the main task and update the Tkinter Window
+gui.after(10, mainTask)
 gui.mainloop()

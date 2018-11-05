@@ -8,9 +8,10 @@ import ctypes
 WorkDir = os.getcwd() # Gather current working directory
 
 # SSH Parameters ##################################################
-server   = "192.168.1.10"
-username = "pi"
-password = "Lionel2truck"
+server    = "192.168.1.10"
+username  = "pi"
+password  = "Lionel2truck"
+remoteLog = "/home/pi/pianobar.out"
 # Pianobar Control Character Strings
 nxt      = "n"
 plps     = " "
@@ -80,14 +81,25 @@ def saveLogasName():
             filetypes = (("text file","*.txt"),("all files","*.*")))
     print(gui.filename)
 
+def write(textstr,color=False):
+    text.insert(END, textstr + "\n")
+    print(text.index(END))
+    if (color != False):
+        ind = text.index(END)
+        start = float(ind) - 2
+        strlen = len(textstr)
+        stop = start + strlen/10
+        print(start, stop)
+        text.tag_add("color", str(start), str(stop))
+        text.tag_config("color", foreground = color)
+
 def mainTask():
-##    print("hi there")
-##    print(sftp.getcwd())
-##    sftp.chdir("/home/pi")
-##    print(sftp.getcwd())
-##    print(sftp.listdir())
-##    print(sftp.lstat("pianobar.out"))
-##    sftp.get( WorkDir+"\Plog.txt", "pianobar.out" )
+    command = ">" + remoteLog
+    try:
+        sftp.get( remoteLog, WorkDir+"\Plog.txt" )
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command( command )
+    except:
+        write("FTP ERROR!!!","red")
     
     gui.after(5000, mainTask) # Reschedule main task
 ###################################################################

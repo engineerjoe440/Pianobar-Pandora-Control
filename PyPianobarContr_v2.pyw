@@ -3,6 +3,7 @@ from tkinter import messagebox # Used for tkinter popups
 from tkinter import filedialog # Used for file dialog operations
 import paramiko as p # Used for SSH
 import time # Used for delays
+import unicodedata # Used to filter non-printable characters out of strings
 import os
 import ctypes
 WorkDir = os.getcwd() # Gather current working directory
@@ -32,6 +33,9 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 ###################################################################
 
 # Functions #######################################################
+def remove_control_characters(s):
+    return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
+
 def on_closing():
     sftp.close() # Close SSH FTP connection on quit
     ssh.close() # Close SSH Connection on quit
@@ -82,7 +86,7 @@ def saveLogasName():
     print(gui.filename)
 
 def write(textstr,color=False):
-    text.insert(END, textstr)
+    text.insert(END, textstr + "\n")
     if (color != False):
         ind = text.index(END)
         start = float(ind) - 2
@@ -100,11 +104,12 @@ def mainTask():
         write("FTP ERROR!!!","red")
     with open(WorkDir+"\Plog.txt") as f:
         for line in f:
+            line = remove_control_characters( line )
             if (line.find("2KTIME") == -1):
-                line = line[4:]
+                line = line[3:]
                 write(line,"cyan")
     
-    gui.after(15000, mainTask) # Reschedule main task
+    gui.after(5000, mainTask) # Reschedule main task
 ###################################################################
 
 # Gather Images ###################################################
@@ -166,7 +171,7 @@ conmenu.add_command(label = "Start Pianobar", command = startPandora)
 conmenu.add_command(label = "Quit Pianobar", command = quitPandora)
 menubar.add_cascade(label = "Pandora", menu = conmenu)
 # Terminal/Printout Display
-text = Text(termframe, bg="black",fg="green2",width=100)
+text = Text(termframe, bg="black",fg="green2",width=100,wrap=WORD)
 text.pack()
 # Special Command Entry
 spclEntry = Entry(contframe, textvariable=spclStr, bg="white", bd=5).pack(side=LEFT)

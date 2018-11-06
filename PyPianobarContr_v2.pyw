@@ -82,14 +82,12 @@ def saveLogasName():
     print(gui.filename)
 
 def write(textstr,color=False):
-    text.insert(END, textstr + "\n")
-    print(text.index(END))
+    text.insert(END, textstr)
     if (color != False):
         ind = text.index(END)
         start = float(ind) - 2
         strlen = len(textstr)
         stop = start + strlen/10
-        print(start, stop)
         text.tag_add("color", str(start), str(stop))
         text.tag_config("color", foreground = color)
 
@@ -100,8 +98,13 @@ def mainTask():
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command( command )
     except:
         write("FTP ERROR!!!","red")
+    with open(WorkDir+"\Plog.txt") as f:
+        for line in f:
+            if (line.find("2KTIME") == -1):
+                line = line[4:]
+                write(line,"cyan")
     
-    gui.after(5000, mainTask) # Reschedule main task
+    gui.after(15000, mainTask) # Reschedule main task
 ###################################################################
 
 # Gather Images ###################################################

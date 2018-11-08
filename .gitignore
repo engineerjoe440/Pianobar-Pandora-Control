@@ -1,0 +1,6 @@
+# Ignore Reference Files
+Updated_Python_TCP_Server_Control.zip
+Updated_Python_TCP_Server_Control/
+
+# Ignore Files with u/name p/word
+RemoteParams.txt

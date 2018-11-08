@@ -8,11 +8,34 @@ import os
 import ctypes
 WorkDir = os.getcwd() # Gather current working directory
 
+# Control Character Removal Tool ##################################
+def remove_control_characters(s):
+    return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
+###################################################################
+
+# File Names ######################################################
+selffile = "\PyPianobarContr_v2.pyw"
+remParams = "\RemoteParams.txt"
+Plog = "\Plog.txt"
+
+###################################################################
+
 # SSH Parameters ##################################################
-server    = "192.168.1.10"
-username  = "pi"
-password  = "Lionel2truck"
-remoteLog = "/home/pi/pianobar.out"
+# Load from file
+with open(WorkDir + remParams) as fp:
+    for i, line in enumerate(fp):
+        line = remove_control_characters(line)
+        if i == 7: # 8th line - IP
+            server    = str(line)
+        elif i == 8: # 9th line - username
+            username  = str(line)
+        elif i == 9: # 10th line - password
+            password  = str(line)
+        elif i == 10: # 11th line - Remote Log directory
+            remoteLog = str(line)
+        elif i > 10:
+            break
+
 # Pianobar Control Character Strings
 nxt      = "n"
 plps     = " "
@@ -33,8 +56,10 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 ###################################################################
 
 # Functions #######################################################
-def remove_control_characters(s):
-    return "".join(ch for ch in s if unicodedata.category(ch)[0]!="C")
+def open_local_file( fname ):
+    # Open a local file for editing by user
+    file = WorkDir + fname
+    os.startfile(file)
 
 def on_closing():
     sftp.close() # Close SSH FTP connection on quit
@@ -98,11 +123,11 @@ def write(textstr,color=False):
 def mainTask():
     command = ">" + remoteLog
     try:
-        sftp.get( remoteLog, WorkDir+"\Plog.txt" )
+        sftp.get( remoteLog, WorkDir+Plog )
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command( command )
     except:
         write("FTP ERROR!!!","red")
-    with open(WorkDir+"\Plog.txt") as f:
+    with open(WorkDir+Plog) as f:
         for line in f:
             line = remove_control_characters( line )
             if (line.find("2KTIME") == -1):
@@ -195,11 +220,20 @@ try:
     text.insert(END, "SSH Connection Established Successfully!\n")
 except TimeoutError:
     # If failure, indicate to user
-    text.insert(END, "SSH Connection Failed!")
+    write("SSH Connection Failed!","red")
     gui.update()
-    messagebox.showinfo("Pianobar Control", "An error occurred "+
-                        "while trying to make SSH connection.\n"+
-                        "Check network and try again.")
+    resp = messagebox.askquestion("Pianobar Control", "An error occurred "+
+                                  "while trying to make SSH connection.\n"+
+                                  "Check network and try again.\n\n"+
+                                  "Would you like to edit your server config. "+
+                                  "file to attempt fixing the issue?")
+    if resp == 'yes':
+        open_local_file( remParams )
+        resp = messagebox.askquestion("Pianobar Control", "Would you like to " +
+                                      "attempt restarting with the updated " +
+                                      "configuration file?")
+        if resp == 'yes':
+            messagebox.showinfo("Pianobar Control","Sorry, that's not available now.")
     gui.destroy()
     sys.exit()
 ###################################################################

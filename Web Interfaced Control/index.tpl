@@ -49,11 +49,11 @@
 
 </style>
  <form align="right" method="post">
- <button type="submit" name="vdown" class="button"><img src="volume_down.svg" width="30" height="30"></button>
- <button type="submit" name="vup" class="button"><img src="volume_up.svg" width="30" height="30"></button>
+ <button type="submit" name="vdown" value="1" class="button"><img src="volume_down.svg" width="30" height="30"></button>
+ <button type="submit" name="vup" value="1" class="button"><img src="volume_up.svg" width="30" height="30"></button>
  &ensp; &ensp; &ensp;
- <button type="submit" name="stationlist" class="setbutton"><img src="stationlist.svg" width="30" height="30"></button>
- <button type="submit" name="settings" class="setbutton"><img src="settings.svg" width="30" height="30"></button>
+ <button type="submit" name="stationlist" value="1" class="setbutton"><img src="stationlist.svg" width="30" height="30"></button>
+ <button type="submit" name="settings" value="1" class="setbutton"><img src="settings.svg" width="30" height="30"></button>
  </form>
 </head>
 
@@ -77,11 +77,11 @@
 <button type="submit" name="skip" value="1" class="button"><img src="skip.svg" width="50" height="50"></button>
 </p>
 <p>
-<button type="submit" name="thumb_down" class="button"><img src="thumb_down.svg" width="50" height="50"></button>
-<button type="submit" name="thumb_up" class="button"><img src="thumb_up.svg" width="50" height="50"></button>
+<button type="submit" name="thumb_down" value="1" class="button"><img src="thumb_down.svg" width="50" height="50"></button>
+<button type="submit" name="thumb_up" value="1" class="button"><img src="thumb_up.svg" width="50" height="50"></button>
 </p>
 <p>
-<input type="submit" name="tired" class="button" value="Shelve Song">
+<input type="submit" name="tired" value="1" class="button" value="Shelve Song">
 </p>
 </form>
 

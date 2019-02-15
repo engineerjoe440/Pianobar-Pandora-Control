@@ -1,6 +1,6 @@
 <html>
 <head>
-<link rel="icon" type="image/ico" href="PandoraP.ico">
+<link rel="icon" type="image/ico" href="Images/PandoraP.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 .button {
@@ -48,44 +48,30 @@
 
 
 </style>
+ <img width=75 height=75 src="Images/PandoraP.ico" align=left hspace=12>
  <form align="right" method="post">
- <button type="submit" name="vdown" class="button"><img src="Images/volume_down.svg" width="30" height="30"></button>
- <button type="submit" name="vup" class="button"><img src="Images/volume_up.svg" width="30" height="30"></button>
- &ensp; &ensp; &ensp;
- <button type="submit" name="stationlist" class="setbutton"><img src="Images/stationlist.svg" width="30" height="30"></button>
- <button type="submit" name="settings" class="setbutton"><img src="Images/settings.svg" width="30" height="30"></button>
+ <button type="submit" name="playpause" class="button"><img src="Images/play.svg" width="30" height="30"></button>
+ <button type="submit" name="playpause" class="button"><img src="Images/pause.svg" width="30" height="30"></button>
  </form>
 </head>
 
 <body bgcolor="#1D519D" lang=EN-US style='tab-interval:.5in'>
 
-<div>
-
-<p>
-<img width=225 height=225 src="Images/PandoraP.ico" align=left hspace=12>
-<span style='font-size:16.0pt;color:white'>________________________________</span></p>
-<p><b><span style='font-size:30.0pt;color:white'>Stanley Solutions</span></b></p>
+<div align="center">
+<p><span style='font-size:16.0pt;color:white'>________________________________</span></p>
 <p style='margin-bottom:0in;margin-bottom:.0001pt;line-height:normal'>
-<b><span style='font-size:30.0pt;color:white'>Pandora Manager</span></b></p>
+<b><span style='font-size:30.0pt;color:white'>Pianobar Settings</span></b></p>
 <span style='font-size:16.0pt;color:white'>________________________________</span></b></p>
 <p><b><span style='font-size:16.0pt;color:white'>Now Playing: {{ songinfo }}</span></b></p>
+</div>
 
 <form align="center" method="post">
 <p>
-<button type="submit" name="playpause" class="button"><img src="Images/play.svg" width="50" height="50"></button>
-<button type="submit" name="playpause" class="button"><img src="Images/pause.svg" width="50" height="50"></button>
-<button type="submit" name="skip" class="button"><img src="Images/skip.svg" width="50" height="50"></button>
-</p>
-<p>
-<button type="submit" name="thumb_down" class="button"><img src="Images/thumb_down.svg" width="50" height="50"></button>
-<button type="submit" name="thumb_up" class="button"><img src="Images/thumb_up.svg" width="50" height="50"></button>
-</p>
-<p>
-<input type="submit" name="tired" class="button" value="Shelve Song">
+<input type="submit" name="start" class="button" value="Start Pianobar">
+<input type="submit" name="start" class="button" value="Stop Pianobar">
 </p>
 </form>
 
-</div>
 </body>
 <footer align="right">
   <p style='color:white'>&copy; Stanley Solutions</p>

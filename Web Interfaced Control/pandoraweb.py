@@ -12,18 +12,23 @@ from bottle import request, error, static_file
 # Define Webpage Parameters
 IP = 'localhost'
 PORT = '80'
+HTMLdir = "C:/Users/Joe Stanley/Desktop/pandoraweb/Web Interfaced Control"
 
 Webapp = Bottle()
 
+# Define and route Static Files (Images):
+
+
 # Define Pages:
-def home():
-	return( static_file("index.html", root="" ) )
-def settings():
-	return( static_file("settings.html", root="" ) )
+def home(songinfo):
+	return( template("index.tpl", {'songinfo':songinfo} , root=HTMLdir) )
+def settings(songinfo):
+	return( template("settings.tpl", root=HTMLdir ) )
 
 # Define OS Interaction Function
 def cmd( command ):
 	# Send command to OS
+	x = 1
 
 # Define Pianobar Control Function:
 def pianobar( command ):
@@ -33,22 +38,24 @@ def pianobar( command ):
 	cmd( command )
 
 # Define Generic GET-Based Load:
+@Webapp.route('/index')
 @Webapp.route('/')
 def index():
-    return( home() )
+	return( home("test") )
 
 # Define Control-Based Function
+@Webapp.post('/index')
 @Webapp.post('/')
 def do_control():
     playpause   = request.forms.get('playpause')
     skip        = request.forms.get('skip')
     print("I made it")
     print(playpause, skip)
-    return(home())
+    return(home("test"))
 
 @Webapp.error(404)
 def error404(error):
     return("Sorry, that link or page seems to be unavailable.")
 
 # Run the Server
-Webapp.run(host=IP, port=PORT)
+Webapp.run(host=IP, port=PORT, reloader=True)

@@ -81,7 +81,7 @@
 <button type="submit" name="thumb_up" value="1" class="button"><img src="thumb_up.svg" width="50" height="50"></button>
 </p>
 <p>
-<input type="submit" name="tired" value="1" class="button" value="Shelve Song">
+<input type="submit" name="tired" class="button" value="Shelve Song">
 </p>
 </form>
 

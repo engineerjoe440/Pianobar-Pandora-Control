@@ -59,11 +59,15 @@ def settingspage():
 @Webapp.post('/index')
 @Webapp.post('/')
 def home_control():
-    playpause   = request.forms.get('playpause')
-    skip        = request.forms.get('skip')
-    print("I made it")
-    print(playpause, skip)
-    return(home("test"))
+	playpauseid   = request.forms.get('playpause')
+	skipid        = request.forms.get('skip')
+	settingid     = request.forms.get('settings')
+	print("I made it")
+	#print(playpause, skip)
+	if(settingid!=None):
+		return( settings("test") )
+	else:
+		return(home("test"))
 
 @Webapp.post('/settings')
 @Webapp.post('/setting')

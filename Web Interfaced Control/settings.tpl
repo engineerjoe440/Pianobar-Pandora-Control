@@ -1,6 +1,6 @@
 <html>
 <head>
-<link rel="icon" type="image/ico" href="Images/PandoraP.ico">
+<link rel="icon" type="image/ico" href="PandoraP.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 .button {
@@ -48,10 +48,10 @@
 
 
 </style>
- <img width=75 height=75 src="Images/PandoraP.ico" align=left hspace=12>
+ <img width=75 height=75 src="PandoraP.ico" align=left hspace=12>
  <form align="right" method="post">
- <button type="submit" name="playpause" class="button"><img src="Images/play.svg" width="30" height="30"></button>
- <button type="submit" name="playpause" class="button"><img src="Images/pause.svg" width="30" height="30"></button>
+ <button type="submit" name="playpause" value="1" class="button"><img src="play.svg" width="30" height="30"></button>
+ <button type="submit" name="playpause" value="1" class="button"><img src="pause.svg" width="30" height="30"></button>
  </form>
 </head>
 
@@ -70,6 +70,7 @@
 <input type="submit" name="start" class="button" value="Start Pianobar">
 <input type="submit" name="start" class="button" value="Stop Pianobar">
 </p>
+<p><input type="submit" name="return" class="button" value="Return"></p>
 </form>
 
 </body>

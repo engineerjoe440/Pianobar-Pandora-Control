@@ -13,17 +13,23 @@ from bottle import request, error, static_file
 IP = 'localhost'
 PORT = '80'
 HTMLdir = "C:/Users/Joe Stanley/Desktop/pandoraweb/Web Interfaced Control"
+IMGdir = "C:/Users/Joe Stanley/Desktop/pandoraweb/Web Interfaced Control/Images"
 
 Webapp = Bottle()
 
 # Define and route Static Files (Images):
-
+@Webapp.route('/settings/<filename>')
+@Webapp.route('/setting/<filename>')
+@Webapp.route('/index/<filename>')
+@Webapp.route('/<filename>')
+def server_static(filename):
+	return(static_file(filename, root=IMGdir))
 
 # Define Pages:
 def home(songinfo):
-	return( template("index.tpl", {'songinfo':songinfo} , root=HTMLdir) )
+	return( template("index.tpl", {'songinfo':songinfo}, root=HTMLdir) )
 def settings(songinfo):
-	return( template("settings.tpl", root=HTMLdir ) )
+	return( template("settings.tpl", {'songinfo':songinfo}, root=HTMLdir ) )
 
 # Define OS Interaction Function
 def cmd( command ):
@@ -37,21 +43,32 @@ def pianobar( command ):
 	# Send command to OS
 	cmd( command )
 
-# Define Generic GET-Based Load:
+# Define Generic GET-Based Homepage-Load:
 @Webapp.route('/index')
 @Webapp.route('/')
 def index():
 	return( home("test") )
 
+# Define Generic GET-Based Settings-Load:
+@Webapp.route('/settings')
+@Webapp.route('/setting')
+def settingspage():
+	return( settings( "test" ) )
+
 # Define Control-Based Function
 @Webapp.post('/index')
 @Webapp.post('/')
-def do_control():
+def home_control():
     playpause   = request.forms.get('playpause')
     skip        = request.forms.get('skip')
     print("I made it")
     print(playpause, skip)
     return(home("test"))
+
+@Webapp.post('/settings')
+@Webapp.post('/setting')
+def setting_control():
+	return(settings("test"))
 
 @Webapp.error(404)
 def error404(error):

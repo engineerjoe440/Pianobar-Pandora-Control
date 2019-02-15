@@ -49,11 +49,11 @@
 
 </style>
  <form align="right" method="post">
- <button type="submit" name="vdown" class="button"><img src="Images/volume_down.svg" width="30" height="30"></button>
- <button type="submit" name="vup" class="button"><img src="Images/volume_up.svg" width="30" height="30"></button>
+ <button type="submit" name="vdown" class="button"><img src="volume_down.svg" width="30" height="30"></button>
+ <button type="submit" name="vup" class="button"><img src="volume_up.svg" width="30" height="30"></button>
  &ensp; &ensp; &ensp;
- <button type="submit" name="stationlist" class="setbutton"><img src="Images/stationlist.svg" width="30" height="30"></button>
- <button type="submit" name="settings" class="setbutton"><img src="Images/settings.svg" width="30" height="30"></button>
+ <button type="submit" name="stationlist" class="setbutton"><img src="stationlist.svg" width="30" height="30"></button>
+ <button type="submit" name="settings" class="setbutton"><img src="settings.svg" width="30" height="30"></button>
  </form>
 </head>
 
@@ -62,7 +62,7 @@
 <div>
 
 <p>
-<img width=225 height=225 src="Images/PandoraP.ico" align=left hspace=12>
+<img width=225 height=225 src="PandoraP.ico" align=left hspace=12>
 <span style='font-size:16.0pt;color:white'>________________________________</span></p>
 <p><b><span style='font-size:30.0pt;color:white'>Stanley Solutions</span></b></p>
 <p style='margin-bottom:0in;margin-bottom:.0001pt;line-height:normal'>
@@ -72,13 +72,13 @@
 
 <form align="center" method="post">
 <p>
-<button type="submit" name="playpause" class="button"><img src="Images/play.svg" width="50" height="50"></button>
-<button type="submit" name="playpause" class="button"><img src="Images/pause.svg" width="50" height="50"></button>
-<button type="submit" name="skip" class="button"><img src="Images/skip.svg" width="50" height="50"></button>
+<button type="submit" name="playpause" value="1" class="button"><img src="play.svg" width="50" height="50"></button>
+<button type="submit" name="playpause" value="1" class="button"><img src="pause.svg" width="50" height="50"></button>
+<button type="submit" name="skip" value="1" class="button"><img src="skip.svg" width="50" height="50"></button>
 </p>
 <p>
-<button type="submit" name="thumb_down" class="button"><img src="Images/thumb_down.svg" width="50" height="50"></button>
-<button type="submit" name="thumb_up" class="button"><img src="Images/thumb_up.svg" width="50" height="50"></button>
+<button type="submit" name="thumb_down" class="button"><img src="thumb_down.svg" width="50" height="50"></button>
+<button type="submit" name="thumb_up" class="button"><img src="thumb_up.svg" width="50" height="50"></button>
 </p>
 <p>
 <input type="submit" name="tired" class="button" value="Shelve Song">

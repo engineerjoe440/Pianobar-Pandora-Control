@@ -63,7 +63,6 @@ def home_control():
 	skipid        = request.forms.get('skip')
 	settingid     = request.forms.get('settings')
 	print("I made it")
-	#print(playpause, skip)
 	if(settingid!=None):
 		return( settings("test") )
 	else:
@@ -72,7 +71,14 @@ def home_control():
 @Webapp.post('/settings')
 @Webapp.post('/setting')
 def setting_control():
-	return(settings("test"))
+	returnid      = request.forms.get('return')
+	playpauseid   = request.forms.get('playpause')
+	start         = request.forms.get('start')
+	stop          = request.forms.get('stop')
+	if(playpauseid!=None):
+		return(settings("test"))
+	else:
+		return(home("test"))
 
 @Webapp.error(404)
 def error404(error):

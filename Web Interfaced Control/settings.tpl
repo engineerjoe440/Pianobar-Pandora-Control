@@ -68,7 +68,7 @@
 <form align="center" method="post">
 <p>
 <input type="submit" name="start" class="button" value="Start Pianobar">
-<input type="submit" name="start" class="button" value="Stop Pianobar">
+<input type="submit" name="stop" class="button" value="Stop Pianobar">
 </p>
 <p><input type="submit" name="return" class="button" value="Return"></p>
 </form>

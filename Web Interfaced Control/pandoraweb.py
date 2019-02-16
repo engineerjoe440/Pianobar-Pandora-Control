@@ -6,14 +6,18 @@
 #########################################################################################
 
 import os
+
+# Change working directory so relative paths (and template lookup) work again
+os.chdir(os.path.dirname('/home/pi/pandoraweb/pandoraweb.py'))
+
 from bottle import route, run, template, get, post, Bottle
-from bottle import request, error, static_file
+from bottle import request, error, static_file, redirect
 
 # Define Webpage Parameters
-IP = 'localhost'
-PORT = '80'
-HTMLdir = "C:/Users/Joe Stanley/Desktop/pandoraweb/Web Interfaced Control"
-IMGdir = "C:/Users/Joe Stanley/Desktop/pandoraweb/Web Interfaced Control/Images"
+IP = '192.168.1.6'
+PORT = '8080'
+HTMLdir = "/home/pi/pandoraweb"
+IMGdir = "/home/pi/pandoraweb/Images"
 
 Webapp = Bottle()
 
@@ -31,29 +35,29 @@ def home(songinfo):
 def settings(songinfo):
 	return( template("settings.tpl", {'songinfo':songinfo}, root=HTMLdir ) )
 
-# Define OS Interaction Function
+# Define Terminal Interaction Function
 def cmd( command ):
-	# Send command to OS
-	x = 1
+	# Send command to Terminal
+	os.system( command )
 
 # Define Pianobar Control Function:
 def pianobar( command ):
 	# Generate Command String
-	command = "something" + command + "more"
-	# Send command to OS
+	command = "echo '" + command + "' >> /home/pi/.config/pianobar/ctl"
+	# Send command to Terminal
 	cmd( command )
 
 # Define Generic GET-Based Homepage-Load:
 @Webapp.route('/index')
 @Webapp.route('/')
 def index():
-	return( home("test") )
+	return( home("Not Currently Available") )
 
 # Define Generic GET-Based Settings-Load:
 @Webapp.route('/settings')
 @Webapp.route('/setting')
 def settingspage():
-	return( settings( "test" ) )
+	return( settings( "Not Currently Available" ) )
 
 # Define Control-Based Function
 @Webapp.post('/index')
@@ -62,11 +66,29 @@ def home_control():
 	playpauseid   = request.forms.get('playpause')
 	skipid        = request.forms.get('skip')
 	settingid     = request.forms.get('settings')
-	print("I made it")
+	stationlistid = request.forms.get('stationlist')
+	vdownid       = request.forms.get('vdown')
+	vupid         = request.forms.get('vup')
+	thumbdownid   = request.forms.get('thumb_down')
+	thumbupid     = request.forms.get('thumb_up')
+	tiredid       = request.forms.get('tired')
+	
+	# Send Pianobar command as necessary
+	if(playpauseid!=None):		pianobar("p")
+	elif(skipid!=None):			pianobar("n")
+	elif(vdownid!=None):		pianobar("(((((")
+	elif(vupid!=None):			pianobar(")))))")
+	elif(thumbdownid!=None):	pianobar("-")
+	elif(thumbupid!=None):		pianobar("+")
+	elif(tiredid!=None):		pianobar("t")
+	
+	# Change page as necessary
 	if(settingid!=None):
-		return( settings("test") )
+		redirect("/setting")
+	elif(stationlistid!=None):
+		redirect("/stations")
 	else:
-		return(home("test"))
+		return(home("Not Currently Available"))
 
 @Webapp.post('/settings')
 @Webapp.post('/setting')
@@ -75,14 +97,21 @@ def setting_control():
 	playpauseid   = request.forms.get('playpause')
 	start         = request.forms.get('start')
 	stop          = request.forms.get('stop')
+	# Start Pianobar when Needed
+	if(start!=None):
+		cmd( "nohup pianobar > pianobar.out 2>&1 &" )
+	# Quit Pianobar when Needed
+	if(stop!=None):
+		pianobar( "q" )
+	# When asked to play or pause, do so
 	if(playpauseid!=None):
-		return(settings("test"))
+		return(settings("Not Currently Available"))
 	else:
-		return(home("test"))
+		redirect("/")
 
 @Webapp.error(404)
 def error404(error):
-    return("Sorry, that link or page seems to be unavailable.")
+    return( template("404err.tpl", root=HTMLdir ) )
 
 # Run the Server
 Webapp.run(host=IP, port=PORT, reloader=True)

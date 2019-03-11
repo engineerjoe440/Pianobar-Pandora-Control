@@ -20,7 +20,7 @@
 <p><span style='font-size:10.0pt;color:white'>Error: 404</span></p>
 
 <p><span style='font-size:16.0pt;color:white'>Go Home --></span>
-<a style='color:#79CCF7' href="http://192.168.1.6">I'll Take You There... ;)</a></p>
+<a style='color:#79CCF7' href="http://192.168.1.6:8080">I'll Take You There... ;)</a></p>
 
 </div>
 </body>

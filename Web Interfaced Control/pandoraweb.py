@@ -8,6 +8,11 @@
 #########################################################################################
 
 import os
+import socket
+import threading
+
+def rpiip():
+    return((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0])
 
 # Change working directory so relative paths (and template lookup) work again
 os.chdir(os.path.dirname('/home/pi/pandoraweb/pandoraweb.py'))
@@ -16,10 +21,12 @@ from bottle import route, run, template, get, post, Bottle
 from bottle import request, error, static_file, redirect
 
 # Define Webpage Parameters
-IP = '192.168.1.6'
+IP = rpiip() # Capture Defined IP
 PORT = '8080'
 HTMLdir = "/home/pi/pandoraweb"
 IMGdir = "/home/pi/pandoraweb/Images"
+music_playing = False
+timeout = True
 
 Webapp = Bottle()
 
@@ -49,22 +56,42 @@ def pianobar( command ):
     # Send command to Terminal
     cmd( command )
 
+# Define timeout Control Function
+def timer():
+    global timeout
+    pianobar( "q" )
+    cmd( "sudo killall pianobar" )
+    timeout = True
+    
+# Define Play/Pause Conditioner Function
+def playpausecond():
+    global music_playing, timeout
+    pianobar("p") # Send Play/Pause Command
+    if(timeout): # Check for system timeout
+        timeout = False
+        cmd( "nohup pianobar > pianobar.out 2>&1 &" )
+    elif(music_playing): # Pause Requested
+        threading.Timer(100, timer).start()
+    music_playing = not music_playing
+
 # Define Generic GET-Based Homepage-Load:
 @Webapp.route('/index')
 @Webapp.route('/')
 def index():
-    return( home("Not Currently Available") )
+    return( home(str(music_playing)) )
 
 # Define Generic GET-Based Settings-Load:
 @Webapp.route('/settings')
 @Webapp.route('/setting')
 def settingspage():
-    return( settings( "Not Currently Available" ) )
+    return( settings( str(music_playing) ) )
 
 # Define Control-Based Function
 @Webapp.post('/index')
 @Webapp.post('/')
 def home_control():
+    global music_playing
+    
     playpauseid   = request.forms.get('playpause')
     skipid        = request.forms.get('skip')
     settingid     = request.forms.get('settings')
@@ -76,40 +103,45 @@ def home_control():
     tiredid       = request.forms.get('tired')
     
     # Send Pianobar command as necessary
-    if(playpauseid!=None):        pianobar("p")
-    elif(skipid!=None):            pianobar("n")
+    if(playpauseid!=None):      playpausecond()
+    elif(skipid!=None):         pianobar("n")
     elif(vdownid!=None):        pianobar("(((((")
-    elif(vupid!=None):            pianobar(")))))")
+    elif(vupid!=None):          pianobar(")))))")
     elif(thumbdownid!=None):    pianobar("-")
-    elif(thumbupid!=None):        pianobar("+")
+    elif(thumbupid!=None):      pianobar("+")
     elif(tiredid!=None):        pianobar("t")
     
     # Change page as necessary
-    if(settingid!=None):
-        redirect("/setting")
-    elif(stationlistid!=None):
-        redirect("/stations")
-    else:
-        return(home("Not Currently Available"))
+    if(settingid!=None):        redirect("/setting")
+    elif(stationlistid!=None):  redirect("/stations")
+    else:                       return(home(str(music_playing)))
 
 @Webapp.post('/settings')
 @Webapp.post('/setting')
 def setting_control():
+    global music_playing
+    
     returnid      = request.forms.get('return')
     playpauseid   = request.forms.get('playpause')
     start         = request.forms.get('start')
     stop          = request.forms.get('stop')
-    # Start Pianobar when Needed
+    reboot        = request.forms.get('reboot')
+    
+    # Perform Desired Action
     if(start!=None):
         cmd( "nohup pianobar > pianobar.out 2>&1 &" )
-    # Quit Pianobar when Needed
+        music_playing = True
     if(stop!=None):
         pianobar( "q" )
-    # When asked to play or pause, do so
+        cmd( "sudo killall pianobar" )
+        music_playing = False
+    if(reboot!=None):
+        cmd( "sudo reboot" )
+    
     if(playpauseid!=None):
-        pianobar("p")
-        return(settings("Not Currently Available"))
-    else: # Redirect to index when not play/pause
+        playpausecond()
+        return(settings(str(music_playing)))
+    else:
         redirect("/")
 
 @Webapp.error(404)

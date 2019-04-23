@@ -26,7 +26,6 @@ PORT = '8080'
 HTMLdir = "/home/pi/pandoraweb"
 IMGdir = "/home/pi/pandoraweb/Images"
 music_playing = False
-timeout = True
 
 Webapp = Bottle()
 
@@ -56,23 +55,26 @@ def pianobar( command ):
     # Send command to Terminal
     cmd( command )
 
-# Define timeout Control Function
+# Define timer Control Function
 def timer():
-    global timeout
-    pianobar( "q" )
-    cmd( "sudo killall pianobar" )
-    timeout = True
+    if not music_playing:
+        pianobar( "q" )
+        cmd( "sudo killall pianobar" )
     
 # Define Play/Pause Conditioner Function
 def playpausecond():
-    global music_playing, timeout
-    pianobar("p") # Send Play/Pause Command
-    if(timeout): # Check for system timeout
-        timeout = False
+    global music_playing
+    # Check for running Pianobar Process
+    if( os.system("pidof pianobar") == 0 ):
+        # Pianobar process is running
+        pianobar("p") # Send Play/Pause Command
+        if(music_playing): # Pause Requested
+            threading.Timer(100, timer).start()
+        music_playing = not music_playing
+    else:
+        # No Running Process, Must Start One
+        music_playing = True
         cmd( "nohup pianobar > pianobar.out 2>&1 &" )
-    elif(music_playing): # Pause Requested
-        threading.Timer(100, timer).start()
-    music_playing = not music_playing
 
 # Define Generic GET-Based Homepage-Load:
 @Webapp.route('/index')
